@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             logger.info("Processing update: {}", update);
             if (update.message().text().equals("/start") && update.message() != null) {
                 SendMessage message = new SendMessage(update.message().chat().id(), "Привет! Я бот BountyBot");
-                telegramBot.execute(message);
+                SendResponse response = telegramBot.execute(message);
             }
         });
 

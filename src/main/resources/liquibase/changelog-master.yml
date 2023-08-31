@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - include:
+    file: liquibase/scripts/user.sql
+
+  - changeSet:
+      id: create-notification-task-table
+      author: your-name
+      changes:
+        - createTable:
+            tableName: notification_task
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: chat_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: scheduled_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
