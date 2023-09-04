@@ -1,7 +1,8 @@
-package pro.sky.telegrambot;
+package pro.sky.telegrambot.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Entity
@@ -10,37 +11,40 @@ public class NotificationTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "chat_id", nullable = false)
-    private String chatId;
+    private int chatId;
 
     @Column(name = "message", nullable = false)
     private String message;
 
     @Column(name = "scheduled_time", nullable = false)
     private LocalDateTime scheduledTime;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    String formatDateTime = scheduledTime.format(formatter);
 
-    public NotificationTask(Long id, String chatId, String message, LocalDateTime scheduledTime) {
+
+    public NotificationTask(int id, int chatId, String message, LocalDateTime scheduledTime) {
         this.id = id;
         this.chatId = chatId;
         this.message = message;
         this.scheduledTime = scheduledTime;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getChatId() {
+    public int getChatId() {
         return chatId;
     }
 
-    public void setChatId(String chatId) {
+    public void setChatId(int chatId) {
         this.chatId = chatId;
     }
 

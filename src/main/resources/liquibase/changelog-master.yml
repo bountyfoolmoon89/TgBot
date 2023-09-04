@@ -4,7 +4,7 @@ databaseChangeLog:
 
   - changeSet:
       id: create-notification-task-table
-      author: your-name
+      author: tgbotuser
       changes:
         - createTable:
             tableName: notification_task
