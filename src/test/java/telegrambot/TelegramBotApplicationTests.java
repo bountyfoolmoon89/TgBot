@@ -1,13 +1,11 @@
-package com.example.demo;
+package telegrambot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TgBotApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
+class TelegramBotApplicationTests {
+    @Test
+    void contextLoads() {
+    }
 }
