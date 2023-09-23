@@ -11,10 +11,11 @@ public class NotificationTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "chat_id", nullable = false)
+    private long id;
 
     @Column(name = "chat_id", nullable = false)
-    private int chatId;
+    private long chatId;
 
     @Column(name = "message", nullable = false)
     private String message;
@@ -25,14 +26,18 @@ public class NotificationTask {
     String formatDateTime = scheduledTime.format(formatter);
 
 
-    public NotificationTask(int id, int chatId, String message, LocalDateTime scheduledTime) {
+    public NotificationTask(long id, long chatId, String message, LocalDateTime scheduledTime) {
         this.id = id;
         this.chatId = chatId;
         this.message = message;
         this.scheduledTime = scheduledTime;
     }
 
-    public int getId() {
+    public NotificationTask() {
+
+    }
+
+    public long getId() {
         return id;
     }
 
@@ -40,7 +45,7 @@ public class NotificationTask {
         this.id = id;
     }
 
-    public int getChatId() {
+    public long getChatId() {
         return chatId;
     }
 
