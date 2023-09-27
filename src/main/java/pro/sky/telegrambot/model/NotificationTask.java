@@ -11,7 +11,7 @@ public class NotificationTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private long id;
 
     @Column(name = "chat_id", nullable = false)
