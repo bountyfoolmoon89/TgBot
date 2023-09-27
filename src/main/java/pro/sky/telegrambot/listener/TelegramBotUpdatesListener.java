@@ -70,4 +70,5 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public void executeTask() {
         notificationTimer.sendNotifications();
     }
+
 }
