@@ -22,9 +22,6 @@ public class NotificationTask {
 
     @Column(name = "scheduled_time", nullable = false)
     private LocalDateTime scheduledTime;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-    String formatDateTime = scheduledTime.format(formatter);
-
 
     public NotificationTask(long id, long chatId, String message, LocalDateTime scheduledTime) {
         this.id = id;
