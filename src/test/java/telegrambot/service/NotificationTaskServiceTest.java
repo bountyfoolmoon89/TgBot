@@ -35,7 +35,7 @@ class NotificationTaskServiceTest {
 
         when(repository.save(task1)).thenReturn(task1);
 
-        assertThat(task1).isSameAs(service.create(1, "28.07.2023 13:46", "Текст задания"));
+        assertThat(task1).isSameAs(service.create(1L, "28.07.2023 13:46", "Текст задания"));
 
         verify(repository).save(task1);
         verify(repository, times(1)).save(task1);

@@ -3,19 +3,14 @@ package pro.sky.telegrambot.listener;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import pro.sky.telegrambot.model.NotificationTask;
+import pro.sky.telegrambot.component.NotificationTimer;
 import pro.sky.telegrambot.services.NotificationTaskService;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,15 +20,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    @Autowired
     private final TelegramBot telegramBot;
+
+    private final NotificationTimer notificationTimer;
 
     private final NotificationTaskService service;
 
-    @Autowired
-    public TelegramBotUpdatesListener(final NotificationTaskService service, final TelegramBot telegramBot) {
-        this.service = service;
+    private static final Pattern pattern = Pattern.compile("([0-9.:\\s]{16})(\\s)(\\W+)");
+
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, NotificationTimer notificationTimer, NotificationTaskService service) {
         this.telegramBot = telegramBot;
+        this.notificationTimer = notificationTimer;
+        this.service = service;
     }
 
     @PostConstruct
@@ -48,18 +46,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             if (update.message() != null) {
                 Long chatId = update.message().chat().id();
                 String text = update.message().text();
-                if (text.equals("/start")) {
-                    sendMessage(chatId, "Привет! Я бот BountyBot. Введи время и название задачи в виде: 01.01.2022 20:00 Сделать домашнюю работу, и я пришлю тебе напоминалку");
-                } else {
-                    Pattern pattern = Pattern.compile("([0-9.:\\s]{16})(\\s)(\\W+)");
-                    Matcher matcher = pattern.matcher(text);
-                    if (matcher.matches()) {
-                        String date = matcher.group(1);
-                        String item = matcher.group(3);
-                        service.create(Math.toIntExact(chatId), date, item);
-                        sendMessage( chatId,"Задача успешно добавлена");
+                if (text != null && !text.isEmpty()) {
+                    if (text.equals("/start")) {
+                        notificationTimer.sendMessage(chatId, "Привет! Я бот BountyBot. Введи время и название задачи в виде: 01.01.2022 20:00 Сделать домашнюю работу, и я пришлю тебе напоминалку");
                     } else {
-                        sendMessage( chatId, "Сообщение должно иметь вид: 01.01.2022 20:00 Сделать домашнюю работу");
+                        Matcher matcher = pattern.matcher(text);
+                        if (matcher.matches()) {
+                            String date = matcher.group(1);
+                            String item = matcher.group(3);
+                            service.create(chatId, date, item);
+                            notificationTimer.sendMessage( chatId,"Задача успешно добавлена");
+                        } else {
+                            notificationTimer.sendMessage( chatId, "Сообщение должно иметь вид: 01.01.2022 20:00 Сделать домашнюю работу");
+                        }
                     }
                 }
             }
@@ -68,20 +67,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     @Scheduled(cron = "0 0/1 * * * *")
-    public void sendNotifications() {
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-        List<NotificationTask> notificationTaskList = service.getNotificationTasksByTaskTime(now);
-        notificationTaskList.forEach((notificationTask -> {
-            Long chatId = notificationTask.getChatId();
-            String text = notificationTask.getMessage();
-            sendMessage(chatId, text);
-        }));
-    }
-
-    private void sendMessage(final Long chatId, final String text) {
-        SendMessage message = new SendMessage(chatId, text);
-        SendResponse response = telegramBot.execute(message);
-        logger.info("Response: {}", response.isOk());
-        logger.info("Error code: {}", response.errorCode());
+    public void executeTask() {
+        notificationTimer.sendNotifications();
     }
 }
