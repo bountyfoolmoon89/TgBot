@@ -26,7 +26,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final NotificationTaskService service;
 
-    private static final Pattern pattern = Pattern.compile("([0-9.:\\s]{16})(\\s)(\\W+)");
+    private static final Pattern PATTERN = Pattern.compile("([0-9.:\\s]{16})(\\s)(\\W+)");
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot, NotificationTimer notificationTimer, NotificationTaskService service) {
         this.telegramBot = telegramBot;
@@ -50,7 +50,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     if (text.equals("/start")) {
                         notificationTimer.sendMessage(chatId, "Привет! Я бот BountyBot. Введи время и название задачи в виде: 01.01.2022 20:00 Сделать домашнюю работу, и я пришлю тебе напоминалку");
                     } else {
-                        Matcher matcher = pattern.matcher(text);
+                        Matcher matcher = PATTERN.matcher(text);
                         if (matcher.matches()) {
                             String date = matcher.group(1);
                             String item = matcher.group(3);
@@ -66,7 +66,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    @Scheduled(cron = "0 0/1 * * * *")
     public void executeTask() {
         notificationTimer.sendNotifications();
     }

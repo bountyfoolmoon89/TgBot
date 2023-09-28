@@ -1,6 +1,9 @@
 package pro.sky.telegrambot.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.telegrambot.listener.TelegramBotUpdatesListener;
 import pro.sky.telegrambot.model.NotificationTask;
 
 import java.time.LocalDateTime;
@@ -12,6 +15,8 @@ import java.util.List;
 public class NotificationTaskService {
 
     private final NotificationTaskRepository repository;
+
+    private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     public NotificationTaskService(final NotificationTaskRepository repository) {
         this.repository = repository;
@@ -28,7 +33,7 @@ public class NotificationTaskService {
             task.setScheduledTime(dateTime);
             task.setMessage(text);
         } catch (DateTimeParseException e) {
-            System.err.println("Неправильный формат даты и времени: " + e.getMessage());
+            logger.error("Неправильный формат даты и времени: " + e.getMessage());
         }
 
         return repository.save(task);
